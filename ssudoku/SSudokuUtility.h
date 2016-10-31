@@ -30,7 +30,8 @@ enum ePropagateType {
 	PROPG_ROTATE
 };
 
-#define PRE_DEFINED_GIVENS 11
+#define GENERATE_NUM_GIVENS 11
+#define GENERATE_GIVENS_TIMER 1000
 
 typedef struct sRate {
 	int nGivens;

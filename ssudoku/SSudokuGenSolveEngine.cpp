@@ -21,10 +21,16 @@ bool CSudokuGenSolveEngine::Generate(ISSudokuBoard & board, ePuzzleLevel level)
 
 int CSudokuGenSolveEngine::Solve(ISSudokuBoard & board)
 {
-	if (_solve(board) == true) {
-		return 1;
+	int numSolution = 0;
+	_solve(board, numSolution, true);
+
+	if (numSolution > 0) {
+		int numSolution2 = 0;
+		if (_solve(board, numSolution2, false) == false) {
+			return numSolution2;
+		}
 	}
-	return 0;
+	return numSolution;
 }
 
 bool CSudokuGenSolveEngine::Validate(const ISSudokuBoard & board)
@@ -41,7 +47,7 @@ bool CSudokuGenSolveEngine::_create_template(ISSudokuBoard &board, ePuzzleLevel 
 	}
 
 	// generate template with fixed givens
-	int numGivens = PRE_DEFINED_GIVENS;
+	int numGivens = GENERATE_NUM_GIVENS;
 	std::vector< int > givens;
 
 	// get current time, use it as rand() seed
@@ -55,16 +61,16 @@ bool CSudokuGenSolveEngine::_create_template(ISSudokuBoard &board, ePuzzleLevel 
 			int temp = rand() % (board.GetNumCells());
 			givens.push_back(temp);
 		}
-
+		int numS = 0;
 		if (_generate_givens(board, givens, 0) == true) {
-			if (Solve(board) > 0) {
+			if (_solve(board, numS, false) == true) {
 				result = true;
 				break;
 			}
 		}
 
 		after = GetTickCount();
-		if ((after - before) > 200) { // 200ms
+		if ((after - before) > GENERATE_GIVENS_TIMER) { // 200ms
 			result = false;
 			break;
 		}
@@ -347,7 +353,8 @@ bool CSudokuGenSolveEngine::_has_unique_solution(ISSudokuBoard &board, const int
 		for (int i = 0; i < l_board->GetBoardSize(); i++) {
 			if (i != preVal) {
 				l_board->SetVal(index, i);
-				if (l_board->IsValid() && (_solve(*l_board) == true)) {
+				int numS = 0;
+				if (l_board->IsValid() && (_solve(*l_board, numS, false) == true)) {
 					result = false;
 					break;
 				}
@@ -371,9 +378,10 @@ bool CSudokuGenSolveEngine::_propagate(ISSudokuBoard & board)
 	return true;
 }
 
-bool CSudokuGenSolveEngine::_solve(ISSudokuBoard & board)
+bool CSudokuGenSolveEngine::_solve(ISSudokuBoard & board, int & numSolution, const bool & checkUnique)
 {
 	if (board.IsSolved()) {
+		numSolution++;
 		return true;
 	}
 
@@ -391,10 +399,12 @@ bool CSudokuGenSolveEngine::_solve(ISSudokuBoard & board)
 		if (board.IsPossible(idx, i)) {
 			board2->Copy(board);
 			if (board2->Assign(idx, i) == true) {
-				if (_solve(*board2) == true) {
-					board.Copy(*board2);
-					delete board2;
-					return true;
+				if (_solve(*board2, numSolution, checkUnique) == true) {
+					if (!checkUnique) {
+						board.Copy(*board2);
+						delete board2;
+						return true;
+					}
 				}
 			}
 		}

@@ -48,13 +48,14 @@ bool CSudokuPuzzle::LoadFromFile(std::string & file)
 	return true;
 }
 
-bool CSudokuPuzzle::Solve()
+int CSudokuPuzzle::Solve()
 {
 	CSudokuGenSolveEngine engine;
-	if (mBoard && (engine.Solve(*mBoard) > 0)) {
-		return true;
+	int nsolution;
+	if (mBoard && ((nsolution=engine.Solve(*mBoard)) > 0)) {
+		return nsolution;
 	}
-	return false;
+	return 0;
 }
 
 bool CSudokuPuzzle::Generate(ePuzzleLevel level)

@@ -296,12 +296,22 @@ void CSudokuDlg9x9::OnBnClickedButtonLoadPuzzle()
 
 void CSudokuDlg9x9::OnBnClickedButtonSolvePuzzle()
 {
-	if (mPuzzle && mPuzzle->Solve() == true) {
-		UpdateCellMap(false);
+	if (mPuzzle) {
+		int nsolution = mPuzzle->Solve();
+		if (nsolution <= 0) {
+			MessageBox(L"NO SOLUTION FOUND");
+		}
+		else if (nsolution == 1) {
+			UpdateCellMap(false);
+			MessageBox(L"A UNIQUE SOLUTION FOUND");
+		}
+		else /*(nsolution > 1)*/ {
+			UpdateCellMap(false);
+			MessageBox(L"MORE THAN ONE SOLUTION FOUND");
+		}
 	}
 	else {
-		UpdateCellMap(false);
-		MessageBox(L"NO SOLUTION FOUND");
+		MessageBox(L"SYSTEM ERROR");
 	}
 }
 
@@ -310,6 +320,12 @@ void CSudokuDlg9x9::OnBnClickedButtonGeneratePuzzle()
 	CString str;
 	mLevel.GetWindowTextW(str);
 	ePuzzleLevel level = (ePuzzleLevel)_wtoi(str);
+
+	if (level <= LEVEL_NONE || level > MAX_PUZZLE_LEVEL) {
+		MessageBox(L"Invalid puzzle level");
+		return;
+	}
+
 	BeginWaitCursor();
 	if (mPuzzle->Generate(level) == true) {
 		UpdateCellMap(true);

@@ -23,7 +23,7 @@ public:
 	bool LoadFromFile(std::string & file);
 	ePuzzleLevel Rate();
 	bool ResetBoard();
-	bool Solve(void);
+	int Solve(void);
 	bool Validate() const;
 	
 private:

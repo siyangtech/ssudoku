@@ -52,7 +52,7 @@ int CSudokuPuzzle::Solve()
 {
 	CSudokuGenSolveEngine engine;
 	int nsolution;
-	if (mBoard && ((nsolution=engine.Solve(*mBoard)) > 0)) {
+	if (mBoard && mBoard->IsLoaded() && ((nsolution=engine.Solve(*mBoard)) > 0)) {
 		return nsolution;
 	}
 	return 0;

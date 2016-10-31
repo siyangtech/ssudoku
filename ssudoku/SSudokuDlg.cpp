@@ -322,7 +322,7 @@ void CSudokuDlg9x9::OnBnClickedButtonGeneratePuzzle()
 	ePuzzleLevel level = (ePuzzleLevel)_wtoi(str);
 
 	if (level <= LEVEL_NONE || level > MAX_PUZZLE_LEVEL) {
-		MessageBox(L"Invalid puzzle level");
+		MessageBox(L"Invalid. Puzzle level is from 1 to 4");
 		return;
 	}
 

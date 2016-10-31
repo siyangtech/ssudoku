@@ -24,6 +24,7 @@ public:
 	virtual bool IsDiggable(const int & index) const = 0;
 	virtual bool IsFilled(const int & index) const = 0;
 	virtual bool IsGiven(const int & index) const = 0;
+	virtual bool IsLoaded() const = 0;
 	virtual bool Initialize(void) = 0;
 	virtual bool IsPossible(const int & index, const int & val) const = 0;
 	virtual bool IsSolved(void) const = 0;
@@ -31,7 +32,7 @@ public:
 	virtual int  LeastCount(void) const = 0;
 	virtual bool LoadBoard(const std::string &content) = 0;
 	virtual void Propagate(ePropagateType type) = 0;
-	virtual void Prune(void) = 0;
+	virtual void Prun(void) = 0;
 	virtual ePuzzleLevel Rate(void) = 0;
 	virtual void SetGiven(const int & index, bool given) = 0;
 	virtual void SetDiggable(const int & index, bool diggabe) = 0;
@@ -98,13 +99,14 @@ public:
 	virtual bool IsDiggable(const int & index) const;
 	virtual bool IsFilled(const int & index) const;
 	virtual bool IsGiven(const int & index) const;
+	virtual bool IsLoaded(void) const { return (mState == sLoaded); }
 	virtual bool IsPossible(const int & index, const int & val) const;
 	virtual bool IsSolved(void) const;
 	virtual bool IsValid(void) const;
 	virtual int  LeastCount(void) const;
 	virtual bool LoadBoard(const std::string &content);
 	virtual void Propagate(ePropagateType type);
-	virtual void Prune(void);
+	virtual void Prun(void);
 	virtual ePuzzleLevel Rate(void);
 	virtual void SetGiven(const int & index, bool given);
 	virtual void SetDiggable(const int & index, bool diggabe);

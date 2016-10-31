@@ -9,7 +9,6 @@ extern LPCTSTR PuzzleTypeString(ePuzzleType type);
 
 enum ePuzzleLevel {
 	LEVEL_NONE,
-	LEVEL_EXTREMELY_EASY,
 	LEVEL_EASY,
 	LEVEL_MEDIUM,
 	LEVEL_DIFFICULT,
@@ -31,7 +30,8 @@ enum ePropagateType {
 };
 
 #define GENERATE_NUM_GIVENS 11
-#define GENERATE_GIVENS_TIMER 1000
+#define GENERATE_GIVENS_TIMER 10000
+#define NUM_TIMES_TO_TRY 5
 
 typedef struct sRate {
 	int nGivens;

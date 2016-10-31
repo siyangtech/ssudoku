@@ -7,9 +7,9 @@ std::vector< std::vector<int> > CSudokuBoard9x9::gUnits(gNumUnits);
 std::vector< std::vector<int> > CSudokuBoard9x9::gPeers(gNumPeers);
 std::vector< std::vector<int> > CSudokuBoard9x9::gUnitsOfCell(gNumCells);
 bool CSudokuBoard9x9::gInitialized = false;
-int CSudokuBoard9x9::gPuzzleGivenBoundary[MAX_PUZZLE_LEVEL + 1] = { 65, 50, 36, 32, 28, 22 };
-int CSudokuBoard9x9::gPuzzleLowerBoundaryPerUnit[MAX_PUZZLE_LEVEL + 1] = { 9, 5, 4, 3, 2, 0 };
-eSequenceOfDigging CSudokuBoard9x9::gPuzzleDigPattern[MAX_PUZZLE_LEVEL + 1] = { SEQ_RANDOM, SEQ_RANDOM, SEQ_RANDOM, SEQ_JUMPING_ONE, SEQ_S, SEQ_LR_TB };
+int CSudokuBoard9x9::gPuzzleGivenBoundary[MAX_PUZZLE_LEVEL + 1] = { 50, 36, 32, 28, 22 };
+int CSudokuBoard9x9::gPuzzleLowerBoundaryPerUnit[MAX_PUZZLE_LEVEL + 1] = { 7, 4, 3, 2, 0 };
+eSequenceOfDigging CSudokuBoard9x9::gPuzzleDigPattern[MAX_PUZZLE_LEVEL + 1] = { SEQ_RANDOM, SEQ_RANDOM, SEQ_JUMPING_ONE, SEQ_S, SEQ_LR_TB };
 
 CSudokuBoard9x9::CSudokuBoard9x9() : mCellsP(NULL), mState(sUninitialized)
 {
@@ -401,7 +401,7 @@ void CSudokuBoard9x9::Propagate(ePropagateType type)
 	}
 }
 
-void CSudokuBoard9x9::Prune(void) {
+void CSudokuBoard9x9::Prun(void) {
 	if(!mCellsP) {
 		return;
 	}
@@ -427,7 +427,7 @@ ePuzzleLevel CSudokuBoard9x9::Rate(void)
 	}
 
 	tPuzzleRate rate;
-	ePuzzleLevel level;
+	int level1, level2, level;
 	
 	rate.nGivens = 0;
 	// count givens
@@ -436,6 +436,12 @@ ePuzzleLevel CSudokuBoard9x9::Rate(void)
 			if (mCellsP[i]->IsGiven()) {
 				rate.nGivens++;
 			}
+		}
+	}
+
+	for (int i = 0; i < MAX_PUZZLE_LEVEL; i++) {
+		if (rate.nGivens < gPuzzleGivenBoundary[i]) {
+			level1 = i + 1;
 		}
 	}
 
@@ -456,12 +462,12 @@ ePuzzleLevel CSudokuBoard9x9::Rate(void)
 	}
 
 	for (int i = 0; i < MAX_PUZZLE_LEVEL; i++) {
-		if (rate.nGivens < gPuzzleGivenBoundary[i]) {
-			level = (ePuzzleLevel)(i + 1);
+		if (rate.nMinGivensPerUnits < gPuzzleLowerBoundaryPerUnit[i]) {
+			level2 = i + 1;
 		}
 	}
-
-	return level;
+	level = (int)((double)level1*0.7 + (double)level2*0.3);
+	return (ePuzzleLevel)level1;
 }
 
 void CSudokuBoard9x9::SetGiven(const int & index, bool given)

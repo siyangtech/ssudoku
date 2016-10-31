@@ -11,9 +11,12 @@ bool CSudokuGenSolveEngine::Generate(ISSudokuBoard & board, ePuzzleLevel level)
 	board.ClearBoard();
 
 	// Create terminal template
-	if (_create_template(board, level) == true) {
-		if (_dig_holes(board, level) == true) {
-			result = true;
+	for (int i = 0; i < NUM_TIMES_TO_TRY; i++) {
+		if (_create_template(board, level) == true) {
+			if (_dig_holes(board, level) == true) {
+				result = true;
+				break;
+			}
 		}
 	}
 	return result;
@@ -22,13 +25,16 @@ bool CSudokuGenSolveEngine::Generate(ISSudokuBoard & board, ePuzzleLevel level)
 int CSudokuGenSolveEngine::Solve(ISSudokuBoard & board)
 {
 	int numSolution = 0;
-	_solve(board, numSolution, true);
+	int nIter = 0;
+	_solve(board, numSolution, nIter, true);
 
 	if (numSolution > 0) {
 		int numSolution2 = 0;
-		if (_solve(board, numSolution2, false) == false) {
+		nIter = 0;
+		if (_solve(board, numSolution2, nIter, false) == false) {
 			return numSolution2;
 		}
+		TRACE(traceAppMsg, 0, "numIter=%d\n", nIter);
 	}
 	return numSolution;
 }
@@ -62,15 +68,16 @@ bool CSudokuGenSolveEngine::_create_template(ISSudokuBoard &board, ePuzzleLevel 
 			givens.push_back(temp);
 		}
 		int numS = 0;
+		int nIter = 0;
 		if (_generate_givens(board, givens, 0) == true) {
-			if (_solve(board, numS, false) == true) {
+			if (_solve(board, numS, nIter, false) == true) {
 				result = true;
 				break;
 			}
 		}
 
 		after = GetTickCount();
-		if ((after - before) > GENERATE_GIVENS_TIMER) { // 200ms
+		if ((after - before) > GENERATE_GIVENS_TIMER) {
 			result = false;
 			break;
 		}
@@ -91,13 +98,11 @@ bool CSudokuGenSolveEngine::_dig_holes(ISSudokuBoard &board, ePuzzleLevel level)
 
 	// number of holes
 	int numGivens = rand() % (board.GetGivenBoundary((ePuzzleLevel)((int)level - 1)) - board.GetGivenBoundary(level)) + board.GetGivenBoundary(level);
-	//int numGivens = board.GetGivenBoundary((ePuzzleLevel)((int)level - 1)) - 1;
 	int numHoles = board.GetNumCells() - numGivens;
 
 	// determine sequence of digging holes
 	eSequenceOfDigging seq = SEQ_RANDOM;
 	switch (level) {
-	case LEVEL_EXTREMELY_EASY:
 	case LEVEL_EASY:
 		seq = SEQ_RANDOM;
 		break;
@@ -119,7 +124,7 @@ bool CSudokuGenSolveEngine::_dig_holes(ISSudokuBoard &board, ePuzzleLevel level)
 	int next_idx = -1;
 	int vcount = 0;
 	int ucount = 0;
-	while ((board.CountDiggable() > 0) && 
+	while ((board.CountDiggable() >= numHoles) && 
 		   _get_next_hole(board, seq, cur_idx, next_idx) ) {
 		
 		// check restriction
@@ -128,11 +133,10 @@ bool CSudokuGenSolveEngine::_dig_holes(ISSudokuBoard &board, ePuzzleLevel level)
 			if (_has_unique_solution(board, next_idx)) {
 				int preVal;
 				if (board.DigCell(next_idx, preVal)) {
-					numHoles--;
-					if (numHoles == 0) {
+					board.SetDiggable(next_idx, false);
+					if (--numHoles == 0) {
 						break;
 					}
-					board.SetDiggable(next_idx, false);
 				}
 			}
 			else {
@@ -145,7 +149,7 @@ bool CSudokuGenSolveEngine::_dig_holes(ISSudokuBoard &board, ePuzzleLevel level)
 			vcount++;
 		}
 		cur_idx = next_idx;
-		if (numHoles < 10) {
+		if (level >= LEVEL_MEDIUM && numHoles < 10) {
 			seq = SEQ_LR_TB;
 		}
 		TRACE(traceAppMsg, 0, "numHoles=%d countDiggable=%d ucount=%d vcount=%d\n", 
@@ -154,7 +158,7 @@ bool CSudokuGenSolveEngine::_dig_holes(ISSudokuBoard &board, ePuzzleLevel level)
 
 	if (numHoles == 0) {
 		_propagate(board);
-		board.Prune();
+		board.Prun();
 		return true;
 	}
 	else {
@@ -342,21 +346,10 @@ bool CSudokuGenSolveEngine::_has_unique_solution(ISSudokuBoard &board, const int
 	}
 	
 	if (l_board->DigCell(index, preVal)) {
-		/*
-		for (int i = 0; i < l_board->GetBoardSize(); i++) {
-			if (i != preVal) {
-				l_board->SetVal(index, i);
-				int numS = 0;
-				if (l_board->IsValid() && (_solve(*l_board, numS, false) == true)) {
-					result = false;
-					break;
-				}
-			}
-		}
-		*/
-		l_board->Prune();
+		l_board->Prun();
 		int numS = 0;
-		if (_solve(*l_board, numS, true) == true) {
+		int nIter = 0;
+		if (_solve(*l_board, numS, nIter, true) == true) {
 			if (numS > 1) {
 				result = false;
 			}
@@ -382,12 +375,14 @@ bool CSudokuGenSolveEngine::_propagate(ISSudokuBoard & board)
 	return true;
 }
 
-bool CSudokuGenSolveEngine::_solve(ISSudokuBoard & board, int & numSolution, const bool & checkUnique)
+bool CSudokuGenSolveEngine::_solve(ISSudokuBoard & board, int & numSolution, int &nIter, const bool & checkUnique)
 {
 	if (board.IsSolved()) {
 		numSolution++;
 		return true;
 	}
+
+	nIter++;
 
 	int idx = board.LeastCount();
 	if (idx == -1) {
@@ -403,7 +398,7 @@ bool CSudokuGenSolveEngine::_solve(ISSudokuBoard & board, int & numSolution, con
 		if (board.IsPossible(idx, i)) {
 			board2->Copy(board);
 			if (board2->Assign(idx, i) == true) {
-				if (_solve(*board2, numSolution, checkUnique) == true) {
+				if (_solve(*board2, numSolution, nIter, checkUnique) == true) {
 					if (!checkUnique) {
 						board.Copy(*board2);
 						delete board2;

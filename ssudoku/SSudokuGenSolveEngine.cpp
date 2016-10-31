@@ -121,14 +121,7 @@ bool CSudokuGenSolveEngine::_dig_holes(ISSudokuBoard &board, ePuzzleLevel level)
 	int ucount = 0;
 	while ((board.CountDiggable() > 0) && 
 		   _get_next_hole(board, seq, cur_idx, next_idx) ) {
-		/*
-		// determin new dig pattern
-		for (int i = 1; i <= MAX_PUZZLE_LEVEL; i++) {
-			if ((numGivens + numHoles) > board.GetGivenBoundary((ePuzzleLevel)i)) {
-				seq = board.GetPuzzleDigPattern((ePuzzleLevel)i);
-			}
-		}
-		*/
+		
 		// check restriction
 		if (!_violate_restriction(board, level, next_idx)) {
 			// check uniqueness
@@ -136,6 +129,10 @@ bool CSudokuGenSolveEngine::_dig_holes(ISSudokuBoard &board, ePuzzleLevel level)
 				int preVal;
 				if (board.DigCell(next_idx, preVal)) {
 					numHoles--;
+					if (numHoles == 1) {
+						numHoles++;
+						numHoles--;
+					}
 					if (numHoles == 0) {
 						break;
 					}
@@ -347,9 +344,9 @@ bool CSudokuGenSolveEngine::_has_unique_solution(ISSudokuBoard &board, const int
 	if (l_board == NULL) {
 		return false;
 	}
-	l_board->Prune();
-	// puzzle should be currently solvable with current value
+	
 	if (l_board->DigCell(index, preVal)) {
+		/*
 		for (int i = 0; i < l_board->GetBoardSize(); i++) {
 			if (i != preVal) {
 				l_board->SetVal(index, i);
@@ -359,6 +356,17 @@ bool CSudokuGenSolveEngine::_has_unique_solution(ISSudokuBoard &board, const int
 					break;
 				}
 			}
+		}
+		*/
+		l_board->Prune();
+		int numS = 0;
+		if (_solve(*l_board, numS, true) == true) {
+			if (numS > 1) {
+				result = false;
+			}
+		}
+		else {
+			result = false;
 		}
 	}
 	else {

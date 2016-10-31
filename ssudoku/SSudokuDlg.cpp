@@ -200,6 +200,13 @@ BOOL CSudokuDlg9x9::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
+	mFontSolved.CreateFont(30, 0, 0, 0, FW_HEAVY, true, false,
+		0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
+		FIXED_PITCH | FF_MODERN, _T("Courier New"));
+
+	mFontGen.CreateFont(20, 0, 0, 0, FW_HEAVY, false, false,
+		0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
+		FIXED_PITCH | FF_MODERN, _T("Times"));
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -303,6 +310,7 @@ void CSudokuDlg9x9::OnBnClickedButtonGeneratePuzzle()
 	CString str;
 	mLevel.GetWindowTextW(str);
 	ePuzzleLevel level = (ePuzzleLevel)_wtoi(str);
+	BeginWaitCursor();
 	if (mPuzzle->Generate(level) == true) {
 		UpdateCellMap(true);
 	}
@@ -310,6 +318,7 @@ void CSudokuDlg9x9::OnBnClickedButtonGeneratePuzzle()
 		mPuzzle->ResetBoard();
 		MessageBox(L"Failed to generate puzzle");
 	}
+	EndWaitCursor();
 }
 
 void CSudokuDlg9x9::OnBnClickedButtonValidatePuzzle()
@@ -335,8 +344,11 @@ void CSudokuDlg9x9::UpdateCellMap(const bool isInit)
 			CString str = board->GetCell(i, j, isInit);
 			//str.Format(L"%s", s);
 			mCellMap[i][j]->SetWindowTextW(str);
-			if (board->IsGiven(i*size + j)) {
-				mCellMap[i][j]->SetHighlight(0, 1);
+			if (!board->IsGiven(i*size + j)) {
+				mCellMap[i][j]->SetFont(&mFontSolved);
+			}
+			else {
+				mCellMap[i][j]->SetFont(&mFontGen);
 			}
 		}
 	}

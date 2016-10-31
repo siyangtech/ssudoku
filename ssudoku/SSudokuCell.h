@@ -14,8 +14,6 @@ public:
 
 	CSudokuCell(byte size = 9);
 	~CSudokuCell() {}
-
-	CSudokuCell& operator=(const CSudokuCell &src);
 	
 	int    Count() const;
 	void   Eliminate(int i);

@@ -68,6 +68,7 @@ private:
 
 	CString mFileName;
 	CSudokuPuzzle *mPuzzle;
-
+	CFont mFontSolved;
+	CFont mFontGen;
 	void UpdateCellMap(const bool isInit = false);
 };

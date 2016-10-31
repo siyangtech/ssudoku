@@ -17,13 +17,15 @@ class CSudokuPuzzleMgr;
 class CSudokuSerializerText : public ISSudokuSerializer
 {
 public:
-	explicit CSudokuSerializerText(CSudokuPuzzleMgr *mgr) : mMgr(mgr) {}
+	CSudokuSerializerText(CSudokuPuzzleMgr *mgr) : mMgr(mgr) {}
 	~CSudokuSerializerText(){}
 
 	virtual bool FileToBoard(const std::string & name, ISSudokuBoard &board);
 	virtual bool BoardToFile(const std::string & name, const ISSudokuBoard &board);
 
 private:
+	CSudokuSerializerText(const CSudokuSerializerText &src) {}
+	CSudokuSerializerText& operator=(const CSudokuSerializerText &src) {}
 
 	CSudokuPuzzleMgr *mMgr;
 };

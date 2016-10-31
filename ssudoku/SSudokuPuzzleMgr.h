@@ -10,13 +10,16 @@ class CSudokuPuzzle;
 class CSudokuPuzzleMgr
 {
 public:
-	explicit CSudokuPuzzleMgr();
+	CSudokuPuzzleMgr();
 	~CSudokuPuzzleMgr();
 
 	bool Initialize();
 	bool Start();
 
 private:
+	CSudokuPuzzleMgr(const CSudokuPuzzleMgr &src) {}
+	CSudokuPuzzleMgr& operator=(const CSudokuPuzzleMgr &src) {}
+
 	void Cleanup();
 
 	CDialogEx * mPuzzleDlg;

@@ -28,6 +28,9 @@ public:
 	
 private:
 
+	CSudokuPuzzle(const CSudokuPuzzle &src) :mSerializer(src.mSerializer) {}
+	CSudokuPuzzle& operator=(const CSudokuPuzzle &src) {}
+
 	ISSudokuSerializer &mSerializer;
 	ISSudokuBoard *mBoard;
 	ePuzzleLevel mLevel;

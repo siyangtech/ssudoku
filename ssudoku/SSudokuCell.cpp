@@ -5,18 +5,6 @@ CSudokuCell::CSudokuCell(byte size) : mDigits(size, true), mSize(size), mGiven(f
 {
 }
 
-CSudokuCell& CSudokuCell::operator=(const CSudokuCell &src)
-{
-	mDigits.reserve(src.mSize);
-	for (int i = 0; i < mDigits.size(); i++) {
-		mDigits[i] = src.mDigits[i];
-	}
-	mSize = src.mSize;
-	mGiven = src.mGiven;
-	mDiggable = src.mDiggable;
-	return *this;
-}
-
 int CSudokuCell::Count() const 
 {
 	return (int)std::count(mDigits.begin(), mDigits.end(), true);

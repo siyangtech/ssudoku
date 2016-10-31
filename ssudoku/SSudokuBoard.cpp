@@ -2,12 +2,7 @@
 #include "SSudokuBoard.h"
 #include <set>
 
-byte CSudokuBoard9x9::gBoardSize = 9;
-byte CSudokuBoard9x9::gNumUnits = 27; // 9*3
-byte CSudokuBoard9x9::gNumCells = 81; // 9*9
-byte CSudokuBoard9x9::gNumPeers = 81; // 9*9
-byte CSudokuBoard9x9::gNumUnitsOfCell = 3;
-std::string CSudokuBoard9x9::gDigits = { "123456789" };
+const std::string CSudokuBoard9x9::gDigits = { "123456789" };
 std::vector< std::vector<int> > CSudokuBoard9x9::gUnits(gNumUnits);
 std::vector< std::vector<int> > CSudokuBoard9x9::gPeers(gNumPeers);
 std::vector< std::vector<int> > CSudokuBoard9x9::gUnitsOfCell(gNumCells);
@@ -61,6 +56,22 @@ void CSudokuBoard9x9::PrepareBoard()
 			}
 		}
 	}
+}
+
+CSudokuBoard9x9::CSudokuBoard9x9(const CSudokuBoard9x9 &src)
+{
+	Initialize();
+
+	// copy cells
+	if (mCellsP && src.mCellsP) {
+		for (int i = 0; i < gNumCells; i++) {
+			if (mCellsP[i] && src.mCellsP[i]) {
+				*mCellsP[i] = *src.mCellsP[i];
+			}
+		}
+	}
+	mState = src.mState;
+
 }
 
 CSudokuBoard9x9& CSudokuBoard9x9::operator=(const CSudokuBoard9x9 &src)

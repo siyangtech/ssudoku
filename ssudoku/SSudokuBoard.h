@@ -42,13 +42,13 @@ public:
 class CSudokuBoard9x9 : ISSudokuBoard
 {
 private:
+	static const byte CSudokuBoard9x9::gBoardSize = 9;
+	static const byte CSudokuBoard9x9::gNumUnits = 27; // 9*3
+	static const byte CSudokuBoard9x9::gNumCells = 81; // 9*9
+	static const byte CSudokuBoard9x9::gNumPeers = 81; // 9*9
+	static const byte CSudokuBoard9x9::gNumUnitsOfCell = 3;
+	static const std::string CSudokuBoard9x9::gDigits;
 
-	static byte gBoardSize;
-	static byte gNumUnits;
-	static byte gNumCells;
-	static byte gNumPeers;
-	static byte gNumUnitsOfCell;
-	static std::string gDigits;
 	static std::vector< std::vector<int> > gUnits;
 	static std::vector< std::vector<int> > gPeers;
 	static std::vector< std::vector<int> > gUnitsOfCell;
@@ -74,6 +74,7 @@ public:
 	CSudokuBoard9x9();
 	virtual ~CSudokuBoard9x9();
 
+	CSudokuBoard9x9(const CSudokuBoard9x9 &src);
 	CSudokuBoard9x9& operator=(const CSudokuBoard9x9 &src);
 
 	virtual bool Assign(const int & index, const int & val);

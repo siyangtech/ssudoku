@@ -17,6 +17,9 @@ private:
 	bool _solve(ISSudokuBoard & board);
 	bool _violate_restriction(ISSudokuBoard & board, ePuzzleLevel level, const int & next_idx);
 
+	CSudokuGenSolveEngine(const CSudokuGenSolveEngine &src) {}
+	CSudokuGenSolveEngine& operator=(const CSudokuGenSolveEngine &src) {}
+	
 public:
 
 	CSudokuGenSolveEngine() {}

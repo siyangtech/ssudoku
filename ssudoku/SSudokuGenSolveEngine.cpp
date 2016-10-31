@@ -129,10 +129,6 @@ bool CSudokuGenSolveEngine::_dig_holes(ISSudokuBoard &board, ePuzzleLevel level)
 				int preVal;
 				if (board.DigCell(next_idx, preVal)) {
 					numHoles--;
-					if (numHoles == 1) {
-						numHoles++;
-						numHoles--;
-					}
 					if (numHoles == 0) {
 						break;
 					}

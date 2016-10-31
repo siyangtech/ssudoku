@@ -31,7 +31,7 @@ enum ePropagateType {
 
 #define GENERATE_NUM_GIVENS 11
 #define GENERATE_GIVENS_TIMER 10000
-#define NUM_TIMES_TO_TRY 5
+#define NUM_TIMES_TO_TRY 100
 
 typedef struct sRate {
 	int nGivens;

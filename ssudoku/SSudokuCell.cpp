@@ -26,7 +26,7 @@ CString CSudokuCell::GetCellStr(bool filled, bool given, const std::string &char
 	if (given && !IsGiven()) {
 		return str;
 	}
-	for (int i = 0; i < mDigits.size(); i++) {
+	for (unsigned int i = 0; i < mDigits.size(); i++) {
 		if (mDigits[i] == true) {
 			str += charStr[i];
 		}

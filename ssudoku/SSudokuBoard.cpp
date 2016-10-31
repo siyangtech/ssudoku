@@ -7,8 +7,8 @@ std::vector< std::vector<int> > CSudokuBoard9x9::gUnits(gNumUnits);
 std::vector< std::vector<int> > CSudokuBoard9x9::gPeers(gNumPeers);
 std::vector< std::vector<int> > CSudokuBoard9x9::gUnitsOfCell(gNumCells);
 bool CSudokuBoard9x9::gInitialized = false;
-int CSudokuBoard9x9::gPuzzleGivenBoundary[MAX_PUZZLE_LEVEL + 1] = { 50, 36, 32, 28, 22 };
-int CSudokuBoard9x9::gPuzzleLowerBoundaryPerUnit[MAX_PUZZLE_LEVEL + 1] = { 7, 4, 3, 2, 0 };
+int CSudokuBoard9x9::gPuzzleGivenBoundary[MAX_PUZZLE_LEVEL + 1] = { 50, 36, 32, 26, 22 };
+int CSudokuBoard9x9::gPuzzleLowerBoundaryPerUnit[MAX_PUZZLE_LEVEL + 1] = { 6, 4, 3, 2, 0 };
 eSequenceOfDigging CSudokuBoard9x9::gPuzzleDigPattern[MAX_PUZZLE_LEVEL + 1] = { SEQ_RANDOM, SEQ_RANDOM, SEQ_JUMPING_ONE, SEQ_S, SEQ_LR_TB };
 
 CSudokuBoard9x9::CSudokuBoard9x9() : mCellsP(NULL), mState(sUninitialized)
@@ -188,7 +188,7 @@ bool CSudokuBoard9x9::Eliminate(const int & index, const int & val)
 	}
 	else if (N == 1) {
 		int val_temp = mCellsP[index]->Val();
-		for (int i = 0; i < gPeers[index].size(); i++) {
+		for ( unsigned int i = 0; i < gPeers[index].size(); i++) {
 			int k = gPeers[index][i];
 			if (!Eliminate(k, val_temp))
 				return false;
@@ -196,10 +196,10 @@ bool CSudokuBoard9x9::Eliminate(const int & index, const int & val)
 	}
 
 	// Assign val to single remaining peer in a unit
-	for (int i = 0; i < gUnitsOfCell[index].size(); i++) {
+	for (unsigned int i = 0; i < gUnitsOfCell[index].size(); i++) {
 		const int x = gUnitsOfCell[index][i];
 		int n = 0, ks;
-		for (int j = 0; j < gUnits[x].size(); j++) {
+		for (unsigned int j = 0; j < gUnits[x].size(); j++) {
 			const int p = gUnits[x][j];
 			if (mCellsP[p]->IsPossible(val)) {
 				n++;
@@ -306,13 +306,13 @@ bool CSudokuBoard9x9::IsValid(void) const
 		return false;
 	}
 	// make sure there is no duplicate in each unit
-	for (int i = 0; i < gNumUnits; i++) {
+	for (unsigned int i = 0; i < gNumUnits; i++) {
 		std::vector<int> temp;
-		for (int j = 0; j < gUnits[i].size(); j++) {
+		for (unsigned int j = 0; j < gUnits[i].size(); j++) {
 			int idx = gUnits[i][j];
 			if (mCellsP[idx] && mCellsP[idx]->IsFilled()) {
 				int val = mCellsP[idx]->Val();
-				for (int k = 0; k < temp.size(); k++) {
+				for (unsigned int k = 0; k < temp.size(); k++) {
 					if (temp[k] == val) {
 						return false;
 					}
@@ -448,9 +448,9 @@ ePuzzleLevel CSudokuBoard9x9::Rate(void)
 	// count lowest givens per units
 	// make sure there is no duplicate in each unit
 	rate.nMinGivensPerUnits = gBoardSize;
-	for (int i = 0; i < gNumUnits; i++) {
+	for (unsigned int i = 0; i < gNumUnits; i++) {
 		int temp = 0;
-		for (int j = 0; j < gUnits[i].size(); j++) {
+		for (unsigned int j = 0; j < gUnits[i].size(); j++) {
 			int idx = gUnits[i][j];
 			if (mCellsP[idx] && mCellsP[idx]->IsGiven()) {
 				temp++;
@@ -513,10 +513,10 @@ bool CSudokuBoard9x9::ViolateLowerUnitBoundary(const int & index, const ePuzzleL
 	// check whether reach lower boundary of difficulty level
 	int lower_b = GetLowerBoundaryPerUnit(level);
 
-	for (int i = 0; i < gUnitsOfCell[index].size(); i++) {
+	for (unsigned int i = 0; i < gUnitsOfCell[index].size(); i++) {
 		int uIdx = gUnitsOfCell[index][i];
 		int count = 0;
-		for (int j = 0; j < gUnits[uIdx].size(); j++) {
+		for (unsigned int j = 0; j < gUnits[uIdx].size(); j++) {
 			int k = gUnits[uIdx][j];
 			if (mCellsP[k] && mCellsP[k]->IsFilled()) {
 				count++;

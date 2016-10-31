@@ -200,11 +200,11 @@ BOOL CSudokuDlg9x9::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
-	mFontSolved.CreateFont(30, 0, 0, 0, FW_HEAVY, true, false,
+	mFontSolved.CreateFont(20, 0, 0, 0, FW_HEAVY, true, false,
 		0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
 		FIXED_PITCH | FF_MODERN, _T("Courier New"));
 
-	mFontGen.CreateFont(20, 0, 0, 0, FW_HEAVY, false, false,
+	mFontGen.CreateFont(30, 0, 0, 0, FW_HEAVY, false, false,
 		0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
 		FIXED_PITCH | FF_MODERN, _T("Times"));
 

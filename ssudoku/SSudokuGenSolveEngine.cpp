@@ -101,7 +101,7 @@ bool CSudokuGenSolveEngine::_dig_holes(ISSudokuBoard &board, ePuzzleLevel level)
 	int numHoles = board.GetNumCells() - numGivens;
 
 	// determine sequence of digging holes
-	eSequenceOfDigging def_seq, seq = SEQ_RANDOM;
+	eSequenceOfDigging seq = SEQ_RANDOM;
 	switch (level) {
 	case LEVEL_EASY:
 		seq = SEQ_RANDOM;
@@ -118,7 +118,7 @@ bool CSudokuGenSolveEngine::_dig_holes(ISSudokuBoard &board, ePuzzleLevel level)
 	default:
 		return false;
 	}
-	def_seq = seq;
+
 	// dig numHoles holes
 	int cur_idx = -1;
 	int next_idx = -1;
@@ -127,15 +127,8 @@ bool CSudokuGenSolveEngine::_dig_holes(ISSudokuBoard &board, ePuzzleLevel level)
 	while ((board.CountDiggable() >= numHoles) && 
 		   _get_next_hole(board, seq, cur_idx, next_idx) ) {
 
-		if ((board.GetNumCells() - numGivens - numHoles) < 10) {
-			seq = SEQ_RANDOM;
-		}
-		else {
-			seq = def_seq;
-		}
 		// check restriction
 		if (!_violate_restriction(board, level, next_idx)) {
-			// check uniqueness
 			if (_has_unique_solution(board, next_idx)) {
 				int preVal;
 				if (board.DigCell(next_idx, preVal)) {
@@ -175,6 +168,7 @@ bool CSudokuGenSolveEngine::_dig_holes(ISSudokuBoard &board, ePuzzleLevel level)
 }
 
 bool CSudokuGenSolveEngine::_get_next_hole(ISSudokuBoard & board, eSequenceOfDigging seq, const int & cur_idx, int & next_idx)
+/*
 {
 	std::vector<int> diggables;
 	for (int i = 0; i < board.GetNumCells(); i++) {
@@ -191,7 +185,7 @@ bool CSudokuGenSolveEngine::_get_next_hole(ISSudokuBoard & board, eSequenceOfDig
 		return false;
 	}
 }
-/*
+*/
 {
 	bool result = false;
 	int row, col;
@@ -317,7 +311,7 @@ bool CSudokuGenSolveEngine::_get_next_hole(ISSudokuBoard & board, eSequenceOfDig
 	}
 	return result;
 }
-*/
+
 bool CSudokuGenSolveEngine::_generate_givens(ISSudokuBoard & board, std::vector< int > &givens, int pos)
 {
 	if (pos >= givens.size()) {
